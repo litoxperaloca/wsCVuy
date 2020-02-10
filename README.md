@@ -1,0 +1,2 @@
+# wsCVuy
+Código para la extracción de datos del CVUy de la ANII, Uruguay. Este código es parte del resultado del proyecto "Minería de datos como instrumento para auxiliar la política de Ciencia, Tecnología e Innovación: Identificación de patrones de interacción con el sector productivo en la producción de conocimiento y tecnología", financiado por el Fondo Sectorial de Análisis de Datos de la ANII
