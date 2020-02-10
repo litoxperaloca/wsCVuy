@@ -1,11 +1,7 @@
 <?php
-ini_set('max_execution_time', 0);
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-ini_set('memory_limit', '4024M'); // or you could use 1G
-error_reporting(E_ALL);
+require_once './config.php';
 
-$link = new mysqli('127.0.0.1', 'root', 'My_Csic150', 'wscvuy_proyecto_mineria_datos');
+$link = new mysqli($dbHOST, $dbUSER, $dbPASS, $dbNAME);
 $link->query("SET NAMES 'utf8'");
 if ($link->connect_errno) {
     echo "Error: Fallo al conectarse a MySQL debido a: \n";
@@ -62,14 +58,6 @@ if ($link->connect_errno) {
     getMatrixProyectosInvestigacionPorAreaPeriodoFinanciacion($link,"Ingeniería y Tecnología","tec","2006","2011");
     getMatrixProyectosInvestigacionPorAreaPeriodoFinanciacion($link,"Ingeniería y Tecnología","tec","2012","2017");
   }
-  if($action=="proyectos_investigacion_separados"){
-    /*getProyectosInvestigacionPorIdiomaArea($link,"en","Ciencias Médicas y de la Salud","med");
-    getProyectosInvestigacionPorIdiomaArea($link,"en","Ciencias Agrícolas","agraria");
-    getProyectosInvestigacionPorIdiomaArea($link,"en","Ingeniería y Tecnología","tec");*/
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ciencias Médicas y de la Salud","med");
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ciencias Agrícolas","agraria");
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ingeniería y Tecnología","tec");
-  }
   if($action=="proyectos_full"){
     $proyectos = array();
     getProyectosInvestigacionPorAreaArray($link,"es","Ciencias Médicas y de la Salud","med",$proyectos);
@@ -88,25 +76,8 @@ if ($link->connect_errno) {
     create_csv_file("proyectos_investigacion_cvuy_control.csv",$headers,$proyectos);
 
   }
-
-  if($action=="proyectos_investigacion_en"){
-    getProyectosInvestigacionPorIdiomaArea($link,"en","Ciencias Médicas y de la Salud","med");
-    getProyectosInvestigacionPorIdiomaArea($link,"en","Ciencias Agrícolas","agraria");
-    getProyectosInvestigacionPorIdiomaArea($link,"en","Ingeniería y Tecnología","tec");
-  }
-  if($action=="proyectos_investigacion_es"){
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ciencias Médicas y de la Salud","med");
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ciencias Agrícolas","agraria");
-    getProyectosInvestigacionPorIdiomaArea($link,"es","Ingeniería y Tecnología","tec");
-  }
-  if($action=="solo_proyectos"){
-      getProyectosInvestigacionSoloDatosGenerales($link);
-  }
   if($action=="recorte"){
       setRecorteProyectosPorAreaYduplicados($link);
-  }
-  if($action=="testDates"){
-      testOverlappingFunction($link);
   }
 }
 $link->close();

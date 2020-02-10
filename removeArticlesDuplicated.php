@@ -1,11 +1,7 @@
 <?php
-ini_set('max_execution_time', 0);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-ini_set('memory_limit', '4024M'); // or you could use 1G
-error_reporting(E_ALL);
+require_once './config.php';
 
-$link = new mysqli('127.0.0.1', 'root', 'My_Csic150', 'wscvuy_proyecto_mineria_datos');
+$link = new mysqli($dbHOST, $dbUSER, $dbPASS, $dbNAME);
 $link->query("SET NAMES 'utf8'");
 if ($link->connect_errno) {
     echo "Error: Fallo al conectarse a MySQL debido a: \n";

@@ -1,11 +1,7 @@
 <?php
-ini_set('max_execution_time', 0);
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-ini_set('memory_limit', '4024M'); // or you could use 1G
-error_reporting(E_ALL);
+require_once './config.php';
 
-$link = new mysqli('127.0.0.1', 'root', 'My_Csic150', 'wscvuy_proyecto_mineria_datos');
+$link = new mysqli($dbHOST, $dbUSER, $dbPASS, $dbNAME);
 $link->query("SET NAMES 'utf8'");
 if ($link->connect_errno) {
     echo "Error: Fallo al conectarse a MySQL debido a: \n";
@@ -17,23 +13,8 @@ if ($link->connect_errno) {
   if($action=="armarLista"){
       $investigadoresArray = getLista($link);
   }
-  if($action=="datosAlonso"){
-    getDatosFaltantes($link);
-  }
   if($action=="traerCVs"){
       getCVs($link);
-  }
-  if($action=="traerVinculos"){
-      getVinculos($link);
-  }
-  if($action=="checkVinculos"){
-      checkVinculos($link);
-  }
-  if($action=="findInvestigationTeam"){
-      findAndMatchPeople($link, "proyecto_investigacion_equipo");
-  }
-  if($action=="findProduccionTecnicaTeam"){
-      findAndMatchPeople($link, "produccion_tecnica_productos_coautor");
   }
 }
 $link->close();
@@ -1107,9 +1088,10 @@ function parseVinculos($cv_xmlObject,$link,$documento){
 
 
 function getLista($link){
+  require_once './configANII.php';
   $investigadoresArray = array();
-  for( $i= 1 ; $i <= 238 ; $i++ ){
-    $url = "https://apicvuy.anii.org.uy/permisos/?config=1&usuario=csic&clave=@n11CsiC2018&pagina=".$i;
+  for( $i= $paginaInicialListaCVsANII; $i <= $paginaFinalListaCVsANII; $i++ ){
+    $url = "https://apicvuy.anii.org.uy/permisos/?config=1&usuario=".$usuarioANII."&clave=".$passwordANII."&pagina=".$i;
     $xml = download_page($url);
     $xmlObject = new SimpleXMLElement($xml);
     foreach ($xmlObject->USUARIOS->USUARIO as $key => $usuario) {
@@ -1135,6 +1117,7 @@ function getLista($link){
 }
 
 function getCVs($link){
+  require_once './configANII.php';
   $investigadoresArray = array();
   $sql = "SELECT * FROM cvs_a_importar where status = 'IRESTRICTO'";
   $result = $link->query($sql);
@@ -1155,7 +1138,7 @@ function getCVs($link){
       $status = $usuario["status"];
       if($status=="IRESTRICTO"){
         echo $nombres . " " . $apellidos . " " . $documento ."<br/>";
-        $cv_url = "https://apicvuy.anii.org.uy/xml/?config=1&documento=".$documento."&usuario=csic&clave=@n11CsiC2018";
+        $cv_url = "https://apicvuy.anii.org.uy/xml/?config=1&documento=".$documento."&usuario=".$usuarioANII."&clave=".$passwordANII;
         $cv_xml = download_page($cv_url);
         $cv_xml = stripInvalidXml($cv_xml);
         try{
@@ -1186,6 +1169,19 @@ function getCVs($link){
         parse_procesos_tecnicos($cv_xmlObject,$link,$documento);
         parse_trabajos_tecnicos($cv_xmlObject,$link,$documento);
         parse_formacion($cv_xmlObject,$link,$documento);
+        parseHijos($cv_xmlObject,$link,$documento);
+        parseLibros($cv_xmlObject,$link,$documento);
+        parseTrabajosEventos($cv_xmlObject,$link,$documento);
+        parsePremios($cv_xmlObject,$link,$documento);
+        parseTutorias($cv_xmlObject,$link,$documento);
+        parseDocencia($cv_xmlObject,$link,$documento);
+        parseGestion($cv_xmlObject,$link,$documento);
+        parseDireccion($cv_xmlObject,$link,$documento);
+        parseOrganizacionEventos($cv_xmlObject,$link,$documento);
+        parseTextosRevistas($cv_xmlObject,$link,$documento);
+        parseMaterialDidactico($cv_xmlObject,$link,$documento);
+        parseComiteEvaluacionProyectos($cv_xmlObject,$link,$documento);
+        parseVinculos($cv_xmlObject,$link,$documento);
         //exit();
       }
   }
