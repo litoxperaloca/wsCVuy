@@ -16,8 +16,8 @@ if ($link->connect_errno) {
       $id = $row['id'];
       $titulo = $row['titulo'];
       $desc = $row['descripcion'];
-      $tituloES = getTranslation($titulo);
-      $descES = getTranslation($desc);
+      $tituloES = getTranslation($titulo, $apiKey);
+      $descES = getTranslation($desc, $apiKey);
       $sql2 = "update recorte_proyecto_investigacion set tituloTraducido='$tituloES', descripcionTraducida='$descES' where id = '$id'";
       $result2 = $link->query($sql2);
     }
@@ -26,8 +26,7 @@ if ($link->connect_errno) {
 $link->close();
 
 
-function checkGoogleApiKey(){
-  $apiKey = 'AIzaSyAOIlqEHidyCcE_FKqhtERsUfqM4gaqEa8';
+function checkGoogleApiKey($apiKey){
   $url = 'https://www.googleapis.com/language/translate/v2/languages?key=' . $apiKey;
 
   $handle = curl_init($url);
@@ -38,8 +37,7 @@ function checkGoogleApiKey(){
   print_r(json_decode($response, true));
 }
 
-function getTranslation($text){
-  $apiKey = 'AIzaSyAOIlqEHidyCcE_FKqhtERsUfqM4gaqEa8';
+function getTranslation($text, $apiKey){
   $url = 'https://www.googleapis.com/language/translate/v2?key=' . $apiKey . '&q=' . rawurlencode($text) . '&target=es';
 
   $handle = curl_init($url);

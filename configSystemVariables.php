@@ -11,4 +11,6 @@ $dbNAME = 'xxxxx';
 $dbUSER = 'xxxxx';
 $dbPASS = 'xxxxx';
 
+$googleTranslateApiKey = 'xxxxx';
+
  ?>
